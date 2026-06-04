@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Problem Set 1.1 — Vectors & Linear Combinations</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#faf8f3;--ink:#1a1209;--muted:#6b5e4e;--border:#d9cfc0;
+  --red:#b83030;--blue:#1e4d8c;--green:#1a6b3a;--orange:#c45c0a;
+  --purple:#5c2d8c;--teal:#0d6b6b;--gold:#8c6a1a;
+  --panel:#f0ebe0;--hi:#fff9ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.7}
+
+/* ── Header ── */
+header{background:var(--ink);color:var(--paper);padding:28px 20px 22px;text-align:center;position:sticky;top:0;z-index:100}
+header h1{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;letter-spacing:-.01em;margin-bottom:3px}
+header p{font-size:.8rem;opacity:.65;font-style:italic;letter-spacing:.04em}
+
+/* ── Layout ── */
+.container{max-width:780px;margin:0 auto;padding:20px 16px 60px}
+
+/* ── TOC ── */
+.toc{background:var(--panel);border:1.5px solid var(--border);border-radius:6px;padding:14px 18px;margin-bottom:28px}
+.toc h2{font-family:'Playfair Display',serif;font-size:.95rem;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px}
+.toc-btn{padding:4px 8px;background:white;border:1px solid var(--border);border-radius:3px;font-family:'Source Serif 4',serif;font-size:.78rem;cursor:pointer;color:var(--muted);text-align:center;transition:all .12s}
+.toc-btn:hover{background:var(--ink);color:white;border-color:var(--ink)}
+
+/* ── Problem block ── */
+.problem{background:white;border:1.5px solid var(--border);border-radius:8px;margin-bottom:24px;overflow:hidden;box-shadow:2px 3px 0 var(--border)}
+.prob-header{background:var(--ink);color:var(--paper);padding:10px 16px;display:flex;align-items:baseline;gap:10px}
+.prob-num{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.prob-tag{font-size:.7rem;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-style:italic}
+.prob-body{padding:16px}
+.prob-statement{background:var(--hi);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 4px 4px 0;margin-bottom:14px;font-size:.92rem;line-height:1.65}
+.prob-statement strong{color:var(--gold);font-weight:600}
+
+/* ── Sub-tabs ── */
+.sub-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto}
+.sub-tab{padding:6px 14px;border:none;background:none;font-family:'Source Serif 4',serif;font-size:.85rem;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .12s}
+.sub-tab.active{color:var(--ink);border-bottom-color:var(--orange);font-weight:600}
+.sub-content{display:none}.sub-content.active{display:block}
+
+/* ── Solution ── */
+.solution{margin-bottom:14px}
+.solution h3{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px}
+.step{margin:8px 0;padding:8px 12px;border-radius:4px;font-size:.9rem;line-height:1.65}
+.step.eq{background:#f0f4ff;border-left:3px solid var(--blue);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.step.ans{background:#f0fff4;border-left:3px solid var(--green);font-weight:600}
+.step.note{background:var(--panel);border-left:3px solid var(--border);font-style:italic;color:var(--muted);font-size:.85rem}
+.step.warn{background:#fff4f0;border-left:3px solid var(--orange)}
+.math{font-family:'JetBrains Mono',monospace;font-size:.88em;background:#f5f2ee;padding:1px 5px;border-radius:3px}
+.ans-box{background:var(--hi);border:2px solid var(--gold);border-radius:5px;padding:10px 14px;margin:10px 0;font-size:.92rem}
+.ans-box strong{color:var(--green);font-weight:700}
+.check{color:var(--green);font-weight:700}
+canvas{display:block;width:100%;height:auto;border-radius:4px;border:1px solid var(--border);margin:10px 0;cursor:grab}
+canvas:active{cursor:grabbing}
+.vis-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:6px;font-size:.78rem}
+.leg{display:flex;align-items:center;gap:5px}
+.leg-dot{width:12px;height:12px;border-radius:50%}
+.leg-line{width:20px;height:3px;border-radius:2px}
+.controls-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.ctrl-group{display:flex;align-items:center;gap:6px;font-size:.82rem}
+.ctrl-group label{font-style:italic;min-width:16px}
+.ctrl-group input[type=range]{width:100px;height:3px;-webkit-appearance:none;border-radius:2px;outline:none;cursor:pointer}
+.ctrl-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.val-badge{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;min-width:32px}
+.mini-btn{padding:5px 11px;background:var(--ink);color:white;border:none;border-radius:3px;font-family:'Source Serif 4',serif;font-size:.78rem;cursor:pointer}
+.mini-btn:hover{opacity:.75}
+.mini-btn.on{background:var(--orange)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Problem Set 1.1 — Vectors &amp; Linear Combinations</h1>
+  <p>Gilbert Strang · Introduction to Linear Algebra · Chapter 1</p>
+</header>
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h2>Jump to problem</h2>
+  <div class="toc-grid" id="toc"></div>
+</div>
+
+<!-- ════════ PROBLEMS ════════ -->
+
+<!-- PROB 1 -->
+<div class="problem" id="p1">
+  <div class="prob-header"><span class="prob-num">1</span><span class="prob-tag">Geometric description of span</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Describe geometrically (line, plane, or all of <strong>ℝ³</strong>) all linear combinations of:<br>
+    (a) [1,2] and [6,9] &nbsp; (b) [0,0] and [0,2] &nbsp; (c) [0,0], [0,2], and [2,3]</div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-tab="p1a" data-prob="1">Part (a)</button>
+      <button class="sub-tab" data-tab="p1b" data-prob="1">Part (b)</button>
+      <button class="sub-tab" data-tab="p1c" data-prob="1">Part (c)</button>
+    </div>
+    <div class="sub-content active" id="p1a">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">Vectors: <span class="math">v = [1,2]</span>, <span class="math">w = [6,9]</span>. Are they parallel? Two vectors are parallel if one is a scalar multiple of the other.</div>
+        <div class="step eq">Test: is [6,9] = k·[1,2] for some k?  →  k=6 gives [6,12] ≠ [6,9]</div>
+        <div class="step">Since they are <strong>not parallel</strong> and both are nonzero, they span all of ℝ² — every point in the plane is reachable.</div>
+        <div class="ans-box"><strong>Answer: The entire xy-plane (all of ℝ²).</strong><br>
+        Any two non-parallel 2D vectors span ℝ².</div>
+      </div>
+      <p class="vis-label">Visualisation — drag sliders</p>
+      <canvas id="c1a" width="560" height="320"></canvas>
+      <div class="legend">
+        <div class="leg"><div class="leg-line" style="background:var(--red)"></div>v=[1,2]</div>
+        <div class="leg"><div class="leg-line" style="background:var(--blue)"></div>w=[6,9] (scaled down)</div>
+        <div class="leg"><div class="leg-line" style="background:var(--green)"></div>cv+dw</div>
+      </div>
+      <div class="controls-row">
+        <div class="ctrl-group"><label>c</label><input type="range" id="c1a-c" min="-2" max="2" step=".1" value="1"><span class="val-badge" id="v1a-c" style="color:var(--red)">1.0</span></div>
+        <div class="ctrl-group"><label>d</label><input type="range" id="c1a-d" min="-1" max="1" step=".05" value="0"><span class="val-badge" id="v1a-d" style="color:var(--blue)">0.0</span></div>
+      </div>
+    </div>
+    <div class="sub-content" id="p1b">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">Vectors: <span class="math">v = [0,0]</span> (the zero vector), <span class="math">w = [0,2]</span>.</div>
+        <div class="step eq">c·[0,0] + d·[0,2] = [0, 2d]   for any c, d ∈ ℝ</div>
+        <div class="step">The zero vector contributes nothing regardless of c. So the result is always <span class="math">[0, 2d]</span> — a point on the y-axis.</div>
+        <div class="ans-box"><strong>Answer: A line</strong> — specifically the y-axis {(0,y) : y∈ℝ}.<br>
+        The zero vector is useless; only w contributes direction.</div>
+      </div>
+      <canvas id="c1b" width="560" height="280"></canvas>
+    </div>
+    <div class="sub-content" id="p1c">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">Vectors: <span class="math">[0,0]</span>, <span class="math">[0,2]</span>, and <span class="math">[2,3]</span> in 2D.</div>
+        <div class="step eq">c·[0,0] + d·[0,2] + e·[2,3] = [2e, 2d+3e]</div>
+        <div class="step">Again [0,0] contributes nothing. The remaining two vectors [0,2] and [2,3]: test for parallel — [2,3] ≠ k·[0,2] for any k (different x-component). So they are independent.</div>
+        <div class="ans-box"><strong>Answer: The entire xy-plane (all of ℝ²).</strong><br>
+        Two non-parallel nonzero vectors in 2D always span ℝ².</div>
+      </div>
+      <canvas id="c1c" width="560" height="280"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 2 -->
+<div class="problem" id="p2">
+  <div class="prob-header"><span class="prob-num">2</span><span class="prob-tag">Draw v, w, v+w, v−w</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Draw <strong>v = [4,1]</strong> and <strong>w = [−2,2]</strong> and <strong>v+w</strong> and <strong>v−w</strong> in a single xy plane.</div>
+    <div class="solution">
+      <h3>Calculation</h3>
+      <div class="step eq">v + w = [4,1] + [-2,2] = [4+(-2), 1+2] = [2, 3]</div>
+      <div class="step eq">v - w = [4,1] - [-2,2] = [4-(-2), 1-2] = [6, -1]</div>
+      <div class="step note">Geometric note: v+w is the diagonal of the parallelogram formed by v and w. v−w is the other diagonal (from tip of w to tip of v).</div>
+    </div>
+    <canvas id="c2" width="560" height="340"></canvas>
+    <div class="legend">
+      <div class="leg"><div class="leg-line" style="background:var(--red)"></div>v=[4,1]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--blue)"></div>w=[−2,2]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--green)"></div>v+w=[2,3]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--purple)"></div>v−w=[6,−1]</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 3 -->
+<div class="problem" id="p3">
+  <div class="prob-header"><span class="prob-num">3</span><span class="prob-tag">Recover v and w from their sum and difference</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">If <strong>v+w = [5,1]</strong> and <strong>v−w = [1,5]</strong>, compute and draw <strong>v</strong> and <strong>w</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Add the two equations: <span class="math">(v+w)+(v−w) = 2v</span></div>
+      <div class="step eq">2v = [5,1] + [1,5] = [6,6]   →   v = [3,3]</div>
+      <div class="step">Subtract the two equations: <span class="math">(v+w)−(v−w) = 2w</span></div>
+      <div class="step eq">2w = [5,1] − [1,5] = [4,−4]   →   w = [2,−2]</div>
+      <div class="step ans">Verification: v+w = [3,3]+[2,−2] = [5,1] ✓ &nbsp; v−w = [3,3]−[2,−2] = [1,5] ✓</div>
+    </div>
+    <canvas id="c3" width="560" height="320"></canvas>
+    <div class="legend">
+      <div class="leg"><div class="leg-line" style="background:var(--red)"></div>v=[3,3]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--blue)"></div>w=[2,−2]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--green)"></div>v+w=[5,1]</div>
+      <div class="leg"><div class="leg-line" style="background:var(--purple)"></div>v−w=[1,5]</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 4 -->
+<div class="problem" id="p4">
+  <div class="prob-header"><span class="prob-num">4</span><span class="prob-tag">Components of linear combinations</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">From <strong>v = [2,1]</strong> and <strong>w = [1,2]</strong>, find the components of <strong>3v+w</strong> and <strong>cv+dw</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step eq">3v + w = 3·[2,1] + 1·[1,2] = [6,3] + [1,2] = [7, 5]</div>
+      <div class="step eq">cv + dw = c·[2,1] + d·[1,2] = [2c+d,  c+2d]</div>
+      <div class="step note">The general formula [2c+d, c+2d] encodes all possible combinations. This is the beginning of matrix-vector multiplication: the matrix [[2,1],[1,2]] acting on the vector [c,d].</div>
+    </div>
+    <canvas id="c4" width="560" height="300"></canvas>
+    <div class="controls-row">
+      <div class="ctrl-group"><label>c</label><input type="range" id="c4c" min="-3" max="3" step=".1" value="3" style="background:var(--red)"><span class="val-badge" id="v4c" style="color:var(--red)">3.0</span></div>
+      <div class="ctrl-group"><label>d</label><input type="range" id="c4d" min="-3" max="3" step=".1" value="1" style="background:var(--blue)"><span class="val-badge" id="v4d" style="color:var(--blue)">1.0</span></div>
+    </div>
+    <div class="step eq" id="res4">cv+dw = [7, 5]</div>
+  </div>
+</div>
+
+<!-- PROB 5 -->
+<div class="problem" id="p5">
+  <div class="prob-header"><span class="prob-num">5</span><span class="prob-tag">Combinations of three vectors; coplanarity</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">With <strong>u = [1,0,0]</strong>, <strong>v = [0,1,0]</strong>, <strong>w = [0,0,1]</strong>: compute <strong>u+v+w</strong> and <strong>2u+2v+w</strong>. How do you know u, v, w <em>do not</em> all lie in a plane?</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step eq">u + v + w  = [1,0,0]+[0,1,0]+[0,0,1] = [1, 1, 1]</div>
+      <div class="step eq">2u + 2v + w = 2[1,0,0]+2[0,1,0]+[0,0,1] = [2, 2, 1]</div>
+      <div class="step">Why don't u, v, w all lie in one plane? Because they are the three standard basis vectors of ℝ³ — each points along a separate axis. Their combinations cu+dv+ew fill <em>all of ℝ³</em> (the whole space), not just a plane.</div>
+      <div class="ans-box"><strong>Key test:</strong> u, v, w lie in a plane only if one of them is a combination of the other two. But u=[1,0,0] cannot be written as d[0,1,0]+e[0,0,1] — the x-component would be 0, not 1. So they span all of ℝ³.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 6 -->
+<div class="problem" id="p6">
+  <div class="prob-header"><span class="prob-num">6</span><span class="prob-tag">Component sums of combinations</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Every combination of <strong>v = (1,−2,1)</strong> and <strong>w = (0,1,−1)</strong> has components that add to ___. Find c and d so that cv+dw = (3, 3, −6).</div>
+    <div class="solution">
+      <h3>Part 1 — The component sum</h3>
+      <div class="step eq">Sum of v's components: 1 + (−2) + 1 = 0</div>
+      <div class="step eq">Sum of w's components: 0 + 1 + (−1) = 0</div>
+      <div class="step eq">Sum of (cv+dw): c·0 + d·0 = 0</div>
+      <div class="ans-box"><strong>Every combination has components that add to 0.</strong></div>
+      <h3 style="margin-top:12px">Part 2 — Find c and d</h3>
+      <div class="step">Check first: 3+3+(−6) = 0 ✓ (consistent with our rule)</div>
+      <div class="step eq">Component 1:  c·1 + d·0 = 3   →   c = 3</div>
+      <div class="step eq">Component 2:  c·(−2) + d·1 = 3   →   −6 + d = 3   →   d = 9</div>
+      <div class="step eq">Component 3 check:  c·1 + d·(−1) = 3 − 9 = −6 ✓</div>
+      <div class="ans-box"><strong>c = 3, d = 9</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 7 -->
+<div class="problem" id="p7">
+  <div class="prob-header"><span class="prob-num">7</span><span class="prob-tag">9-point grid of combinations</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">In the xy plane, mark all 9 linear combinations <strong>c[1,0] + d[0,1]</strong> with <strong>c = 0,1,2</strong> and <strong>d = 0,1,2</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Since c[1,0]+d[0,1] = [c,d], the nine points are just the grid where c and d each range over {0,1,2}:</div>
+      <div class="step eq">(0,0) (1,0) (2,0)
+(0,1) (1,1) (2,1)
+(0,2) (1,2) (2,2)</div>
+      <div class="step note">This is a 3×3 lattice grid. If c and d ranged over ALL real numbers, we'd fill the entire first quadrant — and with negative values too, all of ℝ².</div>
+    </div>
+    <canvas id="c7" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 8 -->
+<div class="problem" id="p8">
+  <div class="prob-header"><span class="prob-num">8</span><span class="prob-tag">Other diagonal of parallelogram</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">The parallelogram in Figure 1.1 has diagonal <strong>v+w</strong>. What is its other diagonal?</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Label the four corners of the parallelogram: O (origin), v, w, and v+w.</div>
+      <div class="step">Diagonal 1: from O to v+w.</div>
+      <div class="step">Diagonal 2: from w to v, which as a vector is v−w.</div>
+      <div class="ans-box"><strong>The other diagonal is v − w</strong> (the vector from the tip of w to the tip of v).</div>
+      <div class="step note">Note: direction matters. The diagonal goes from w to v, so as a displacement it equals v−w. Its length is |v−w|.</div>
+    </div>
+    <canvas id="c8" width="560" height="300"></canvas>
+    <div class="controls-row">
+      <div class="ctrl-group"><label>v₁</label><input type="range" id="c8v1" min="-3" max="4" step=".5" value="3"><span class="val-badge" id="v8v1">3</span></div>
+      <div class="ctrl-group"><label>v₂</label><input type="range" id="c8v2" min="-2" max="4" step=".5" value="1"><span class="val-badge" id="v8v2">1</span></div>
+      <div class="ctrl-group"><label>w₁</label><input type="range" id="c8w1" min="-3" max="4" step=".5" value="1"><span class="val-badge" id="v8w1">1</span></div>
+      <div class="ctrl-group"><label>w₂</label><input type="range" id="c8w2" min="-2" max="4" step=".5" value="3"><span class="val-badge" id="v8w2">3</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 9 -->
+<div class="problem" id="p9">
+  <div class="prob-header"><span class="prob-num">9</span><span class="prob-tag">Fourth corner of parallelogram</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">If three corners of a parallelogram are <strong>(1,1)</strong>, <strong>(4,2)</strong>, and <strong>(1,3)</strong>, what are all three possible fourth corners?</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Call the three known points A=(1,1), B=(4,2), C=(1,3). In a parallelogram, each pair of opposite vertices averages to the same midpoint. The 4th corner D is determined by which pair is opposite.</div>
+      <div class="step"><strong>Case 1:</strong> A and B are opposite → midpoint = ((1+4)/2,(1+2)/2) = (2.5, 1.5). Then D+C must equal 2×midpoint:</div>
+      <div class="step eq">D = (1+4)−(1,3) = (5,3)−(1,3) = (4, 0)</div>
+      <div class="step"><strong>Case 2:</strong> A and C are opposite → midpoint = (1, 2). Then:</div>
+      <div class="step eq">D = (1+1)−(4,2) = (2,2)−(4,2) = (−2, 0)</div>
+      <div class="step"><strong>Case 3:</strong> B and C are opposite → midpoint = (2.5, 2.5). Then:</div>
+      <div class="step eq">D = (4+1)−(1,1) = (5,3)−(1,1) = (4, 4)</div>
+      <div class="ans-box"><strong>Three possible fourth corners: (4,0), (−2,0), and (4,4).</strong></div>
+    </div>
+    <canvas id="c9" width="560" height="340"></canvas>
+    <div class="controls-row">
+      <button class="mini-btn on" id="b9-1" onclick="setCase9(1)">Case 1: D=(4,0)</button>
+      <button class="mini-btn" id="b9-2" onclick="setCase9(2)">Case 2: D=(−2,0)</button>
+      <button class="mini-btn" id="b9-3" onclick="setCase9(3)">Case 3: D=(4,4)</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 10 -->
+<div class="problem" id="p10">
+  <div class="prob-header"><span class="prob-num">10</span><span class="prob-tag">Unit vectors i, j, k</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">With <strong>i=(1,0,0)</strong>, <strong>j=(0,1,0)</strong>, and <strong>k=(0,0,1)</strong>: which point is the vector sum <strong>i+j</strong>? Describe all points <strong>(x,y,z)</strong> in the unit cube.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step eq">i + j = (1,0,0) + (0,1,0) = (1, 1, 0)</div>
+      <div class="step">This point is on the bottom face of the unit cube — the corner diagonally opposite to the origin on the xy-face.</div>
+      <div class="step">The unit cube has all points (x,y,z) with <span class="math">0 ≤ x,y,z ≤ 1</span>. Its 8 corners are all combinations of 0s and 1s in each coordinate: (0,0,0), (1,0,0), (0,1,0), (0,0,1), (1,1,0), (1,0,1), (0,1,1), (1,1,1).</div>
+      <div class="ans-box"><strong>i+j = (1,1,0)</strong> — a corner of the cube on the xy-face.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 11 -->
+<div class="problem" id="p11">
+  <div class="prob-header"><span class="prob-num">11</span><span class="prob-tag">All 8 corners of unit cube + center</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Four corners of the unit cube are (0,0,0), (1,0,0), (0,1,0), (0,0,1). Find the other four corners. What are the coordinates of the center? What are the six face centers?</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">All 8 corners are every combination of 0 and 1 in each slot:</div>
+      <div class="step eq">Other four corners: (1,1,0), (1,0,1), (0,1,1), (1,1,1)</div>
+      <div class="step eq">Center of cube: average of all corners = (1/2, 1/2, 1/2)</div>
+      <div class="step">Six face centers (one per face — set one coordinate to 0 or 1, average the other two):</div>
+      <div class="step eq">Bottom z=0: (½,½,0)   Top z=1: (½,½,1)
+Front y=0: (½,0,½)   Back y=1: (½,1,½)
+Left x=0: (0,½,½)   Right x=1: (1,½,½)</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 12 -->
+<div class="problem" id="p12">
+  <div class="prob-header"><span class="prob-num">12</span><span class="prob-tag">4-dimensional cube</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">How many corners does a cube have in 4 dimensions? How many 3D faces? A typical corner is (0,0,0,0). A typical edge goes to (1,0,0,0).</div>
+    <div class="solution">
+      <h3>Solution — Pattern from lower dimensions</h3>
+      <div class="step eq">1D (line segment): 2 corners, 1 edge
+2D (square):       4 corners, 4 edges, 1 face
+3D (cube):         8 corners, 12 edges, 6 faces
+4D (hypercube):    ?</div>
+      <div class="step">Each time we add a dimension, we duplicate everything and connect corresponding parts:</div>
+      <div class="step eq">Corners:  2⁴ = 16
+Edges:    4 × 2³ = 32  (each of 4 directions, 2³ edges per direction)
+2D faces: 6 × 2² = 24  (choosing 2 directions from 4: C(4,2)=6, 2² squares each)
+3D faces: 4 × 2¹ = 8   (choosing 3 directions from 4: C(4,3)=4, 2 cubes each)</div>
+      <div class="ans-box"><strong>4D hypercube: 16 corners, 32 edges, 24 square faces, 8 cubic faces.</strong><br>
+      Typical corner: (0,0,0,0). Typical edge: from (0,0,0,0) to (1,0,0,0).</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 13 -->
+<div class="problem" id="p13">
+  <div class="prob-header"><span class="prob-num">13</span><span class="prob-tag">Twelve clock vectors</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">
+    (a) What is the sum V of the twelve vectors from the center to 1:00, 2:00, …, 12:00?<br>
+    (b) If the 2:00 vector is removed, why do the 11 remaining vectors add to 8:00?<br>
+    (c) What are the components of the 2:00 vector <strong>v = (cosθ, sinθ)</strong>?
+    </div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-tab="p13a" data-prob="13">Part (a)</button>
+      <button class="sub-tab" data-tab="p13b" data-prob="13">Part (b)</button>
+      <button class="sub-tab" data-tab="p13c" data-prob="13">Part (c)</button>
+    </div>
+    <div class="sub-content active" id="p13a">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">The 12 clock vectors are equally spaced at 30° intervals around the full circle. Each vector at hour k has a partner directly opposite (6 hours away) with the exact negative components.</div>
+        <div class="step eq">Pairs that cancel: (1:00 + 7:00) = 0,  (2:00 + 8:00) = 0, ..., (6:00 + 12:00) = 0</div>
+        <div class="ans-box"><strong>Sum of all 12 vectors = (0, 0).</strong> They cancel completely by symmetry.</div>
+      </div>
+      <canvas id="c13a" width="560" height="320"></canvas>
+    </div>
+    <div class="sub-content" id="p13b">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">We know: (sum of all 12) = 0. So:</div>
+        <div class="step eq">v₂ + (sum of other 11) = 0
+→  sum of other 11 = −v₂</div>
+        <div class="step">The negative of the 2:00 vector is the vector pointing in the opposite direction — that is, the <strong>8:00 vector</strong> (exactly 6 hours / 180° away).</div>
+        <div class="ans-box"><strong>The 11 remaining vectors add to the 8:00 vector</strong> (= −v₂:₀₀).</div>
+      </div>
+    </div>
+    <div class="sub-content" id="p13c">
+      <div class="solution">
+        <h3>Solution</h3>
+        <div class="step">Clock convention: 12:00 is at the top (+y direction), going clockwise. The 2:00 position is 2/12 × 360° = 60° clockwise from the top.</div>
+        <div class="step">In standard mathematical coordinates (x=right, y=up), 60° clockwise from top = 30° above the positive x-axis:</div>
+        <div class="step eq">θ = 90° − 60° = 30°  (angle from positive x-axis, counterclockwise)</div>
+        <div class="step eq">v₂:₀₀ = (cos 30°,  sin 30°) = (√3/2,  1/2) ≈ (0.866,  0.500)</div>
+        <div class="ans-box"><strong>v = (cos30°, sin30°) = (√3/2, 1/2)</strong></div>
+        <div class="step note">General formula: the k:00 vector is (sin(k·30°), cos(k·30°)) using clock-angle convention.</div>
+      </div>
+      <canvas id="c13c" width="560" height="300"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 14 -->
+<div class="problem" id="p14">
+  <div class="prob-header"><span class="prob-num">14</span><span class="prob-tag">Vectors from 6:00 instead of centre</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Suppose twelve vectors start from <strong>6:00 at the bottom (0,−1)</strong> instead of (0,0). The vector to 12:00 is now doubled to (0,2). Add the new twelve vectors.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Each new vector goes from (0,−1) to a clock-hour point. If the old vector to hour k was v_k (from the origin), then the new vector is:</div>
+      <div class="step eq">new_vₖ = (clock position of hour k) − (0,−1) = v_k + (0,1)</div>
+      <div class="step">So each new vector = old vector + (0,1). Summing all 12:</div>
+      <div class="step eq">Sum of new vectors = Σ(v_k + (0,1))
+                        = Σv_k  +  12·(0,1)
+                        = (0,0) + (0,12)
+                        = (0, 12)</div>
+      <div class="ans-box"><strong>The sum of the 12 new vectors is (0, 12).</strong><br>
+      Check: the 12:00 vector is now (0,1)−(0,−1) = (0,2) ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 15 -->
+<div class="problem" id="p15">
+  <div class="prob-header"><span class="prob-num">15</span><span class="prob-tag">Fractions on the segment from v to w</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Figure 1.5a shows ½v + ½w. Mark the points <strong>¾v + ¼w</strong> and <strong>¼v + ¾w</strong> and <strong>v+w</strong> and <strong>v</strong> and <strong>w</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">All these combinations have c+d=1. When c+d=1, the point cv+dw lies on the <strong>line segment from v to w</strong>. Specifically, ¾v+¼w is ¾ of the way from w toward v (closer to v).</div>
+      <div class="step eq">c=1, d=0: the point v  (endpoint)
+c=¾, d=¼: ¾ of the way from w to v
+c=½, d=½: the midpoint ½v+½w
+c=¼, d=¾: ¼ of the way from w to v
+c=0, d=1: the point w  (other endpoint)</div>
+      <div class="step note">When c+d=1, you get a convex combination — the entire line segment between v and w. For c+d=2 you'd get a parallel segment further out; c+d=0 goes through the origin.</div>
+    </div>
+    <canvas id="c15" width="560" height="300"></canvas>
+    <div class="controls-row">
+      <div class="ctrl-group"><label>c</label><input type="range" id="c15c" min="0" max="1" step=".05" value=".5" style="background:var(--red)"><span class="val-badge" id="v15c" style="color:var(--red)">0.50</span></div>
+      <span style="font-size:.82rem;color:var(--muted)">d = 1−c = <span id="v15d">0.50</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 16 -->
+<div class="problem" id="p16">
+  <div class="prob-header"><span class="prob-num">16</span><span class="prob-tag">The line c+d=1</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Mark the point <strong>−v+2w</strong>. Draw the line of all combinations <strong>cv+dw</strong> with <strong>c+d=1</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">With c+d=1 we can write d=1−c, so: cv+(1−c)w = w + c(v−w). This is the parametric line through w in the direction (v−w) — i.e., the line through v and w, extended infinitely in both directions.</div>
+      <div class="step">For −v+2w: c=−1, d=2, and indeed c+d=1 ✓. So this point is on the same line, just outside the segment.</div>
+      <div class="ans-box">The line c+d=1 passes through <strong>v</strong> (c=1) and <strong>w</strong> (c=0) and extends infinitely. It's the line through v and w.</div>
+    </div>
+    <canvas id="c16" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 17 -->
+<div class="problem" id="p17">
+  <div class="prob-header"><span class="prob-num">17</span><span class="prob-tag">Locating ½v+⅓w and ⅔v+⅓w</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Locate <strong>½v + ⅓w</strong> and <strong>⅔v + ⅓w</strong>. The combinations cv+cw fill a <em>line</em> if c=d, and a ___.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">½v+⅓w: coefficients don't sum to 1 (½+⅓=5/6), so this point is NOT on the v-to-w line. It sits inside the parallelogram at position (½, ⅓) in the v,w coordinate system.</div>
+      <div class="step">⅔v+⅓w: coefficients sum to 1 (⅔+⅓=1), so this IS on the line through v and w, at ⅔ of the way from w to v.</div>
+      <div class="step eq">cv + cw (same coefficient c for both): result = c(v+w).
+This scales v+w by c — all such points lie on a LINE through the origin in the direction v+w.</div>
+      <div class="ans-box">The combinations cv+cw fill a <strong>line through the origin</strong> (in the direction v+w).</div>
+    </div>
+    <canvas id="c17" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 18 -->
+<div class="problem" id="p18">
+  <div class="prob-header"><span class="prob-num">18</span><span class="prob-tag">The parallelogram: 0≤c,d≤1</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Restricted by <strong>0 ≤ c ≤ 1</strong> and <strong>0 ≤ d ≤ 1</strong>, shade all combinations <strong>cv+dw</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">The four corners of the shaded region are at c=0,d=0 → origin; c=1,d=0 → v; c=0,d=1 → w; c=1,d=1 → v+w.</div>
+      <div class="step">As c and d independently sweep [0,1], the result sweeps the entire parallelogram with those four corners.</div>
+      <div class="ans-box">The shaded region is the <strong>parallelogram</strong> with vertices at 0, v, w, and v+w.</div>
+    </div>
+    <canvas id="c18" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 19 -->
+<div class="problem" id="p19">
+  <div class="prob-header"><span class="prob-num">19</span><span class="prob-tag">The cone: c≥0, d≥0</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Restricted only by <strong>c ≥ 0</strong> and <strong>d ≥ 0</strong>, draw the "cone" of all combinations <strong>cv+dw</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Now c and d can be any non-negative numbers (including very large ones). The region is unbounded — it extends infinitely in both the v and w directions.</div>
+      <div class="step">The boundary rays are: d=0 → the ray along v; c=0 → the ray along w. Everything between and beyond those rays (in the "wedge" they form) is filled.</div>
+      <div class="ans-box">The region is a <strong>cone (infinite wedge)</strong> — the set of all points between the ray from 0 through v and the ray from 0 through w, including both rays and everything in between.</div>
+    </div>
+    <canvas id="c19" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 26 -->
+<div class="problem" id="p26">
+  <div class="prob-header"><span class="prob-num">26</span><span class="prob-tag">Solving a 2D linear combination equation</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">What combination <strong>c[1,2] + d[3,1]</strong> produces <strong>[14,8]</strong>? Express as two equations in c and d.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Writing out component by component:</div>
+      <div class="step eq">Row 1 (x): c·1 + d·3 = 14   →   c + 3d = 14  ... (i)
+Row 2 (y): c·2 + d·1 = 8    →   2c + d = 8   ... (ii)</div>
+      <div class="step">From (ii): <span class="math">d = 8 − 2c</span>. Substitute into (i):</div>
+      <div class="step eq">c + 3(8 − 2c) = 14
+c + 24 − 6c   = 14
+−5c            = −10
+c              = 2</div>
+      <div class="step eq">d = 8 − 2(2) = 8 − 4 = 4</div>
+      <div class="step ans">Verification: 2·[1,2] + 4·[3,1] = [2,4] + [12,4] = [14,8] ✓</div>
+      <div class="ans-box"><strong>c = 2, d = 4</strong></div>
+    </div>
+    <canvas id="c26" width="560" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PROB 27 -->
+<div class="problem" id="p27">
+  <div class="prob-header"><span class="prob-num">27</span><span class="prob-tag">Span of i and j in xyz space</span></div>
+  <div class="prob-body">
+    <div class="prob-statement"><em>Review Question.</em> In xyz space, where is the plane of all linear combinations of <strong>i=(1,0,0)</strong> and <strong>j=(0,1,0)</strong>?</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step eq">c·(1,0,0) + d·(0,1,0) = (c, d, 0)</div>
+      <div class="step">The z-component is always 0, but c and d can be anything — so we reach any point (x,y,0).</div>
+      <div class="ans-box"><strong>The xy-plane: all points (x, y, 0).</strong><br>
+      The combination never moves in the z-direction because both i and j have z=0.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 28 -->
+<div class="problem" id="p28">
+  <div class="prob-header"><span class="prob-num">28</span><span class="prob-tag">Find v and w from sum and difference (3D)</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Find vectors <strong>v</strong> and <strong>w</strong> such that <strong>v+w = (4,5,6)</strong> and <strong>v−w = (2,5,8)</strong>.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Add the equations: 2v = (4,5,6)+(2,5,8)</div>
+      <div class="step eq">2v = (6,10,14)   →   v = (3, 5, 7)</div>
+      <div class="step">Subtract the equations: 2w = (4,5,6)−(2,5,8)</div>
+      <div class="step eq">2w = (2,0,−2)   →   w = (1, 0, −1)</div>
+      <div class="step ans">Check: v+w = (3+1, 5+0, 7−1) = (4,5,6) ✓ &nbsp; v−w = (3−1, 5−0, 7+1) = (2,5,8) ✓</div>
+      <div class="ans-box"><strong>v = (3,5,7),   w = (1,0,−1)</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 29 -->
+<div class="problem" id="p29">
+  <div class="prob-header"><span class="prob-num">29</span><span class="prob-tag">Two equations from one combination problem</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Find vectors v and w so that <strong>v+w = (4,5,6)</strong> and <strong>v−w = (2,5,8)</strong>. This is a question with unknown numbers, and an equal number of equations to find those numbers.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">The question asks for two scalar equations from the vector equation c[1,3]+d[2,7]=[0,1]:</div>
+      <div class="step eq">Component 1:  c + 2d = 0  ... (i)
+Component 2:  3c + 7d = 1 ... (ii)</div>
+      <div class="step">From (i): c = −2d. Substitute into (ii):</div>
+      <div class="step eq">3(−2d) + 7d = 1   →   d = 1,   c = −2</div>
+      <div class="step ans">Check: −2[1,3]+1[2,7] = [−2,−6]+[2,7] = [0,1] ✓</div>
+      <div class="ans-box"><strong>c = −2, d = 1.</strong> There is exactly one solution (the system is 2×2 and non-singular).</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 30 -->
+<div class="problem" id="p30">
+  <div class="prob-header"><span class="prob-num">30</span><span class="prob-tag">Three vectors in 2D — always two combinations?</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">The vectors u=(1,3), v=(2,7), w=(c,d) fill the plane (2D). Will there always be two <em>different</em> combinations cu+dv+ew = b? Find four vectors u,v,w in the plane each with four components.</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Since u=(1,3) and v=(2,7) are linearly independent (non-parallel), they already span all of ℝ². Adding any third vector w=(c,d) creates an <em>overdetermined system</em> — there are now infinitely many ways to combine three 2D vectors.</div>
+      <div class="step eq">For any target b, instead of the unique solution (a,b) with just u,v, 
+we can add any multiple of a "null combination":  
+   u·7 − v·3 = (7,21)−(6,21) = (1,0)
+   u·(−2) + v·1 = (−2,−6)+(2,7) = (0,1)</div>
+      <div class="step">So yes, there are <strong>infinitely many</strong> different combinations. You can always shift some weight from u,v to w.</div>
+      <div class="ans-box"><strong>Yes — with three vectors in 2D, there are infinitely many combinations.</strong><br>
+      Exception: if w is the zero vector, it adds no freedom but u,v still cover ℝ².</div>
+      <h3 style="margin-top:10px">Four vectors in ℝ⁴ with four components each:</h3>
+      <div class="step note">From the problem image: u=[2,1,0,0], v=[−1,2,−1,0], w=[0,−1,2,−1], z=[0,0,−1,2]. These are four vectors in ℝ⁴, each with four components. Three equations for c,d,e so cu+dv+ew = b are obtained component by component (first three components give three equations, the fourth is a check).</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROB 31 -->
+<div class="problem" id="p31">
+  <div class="prob-header"><span class="prob-num">31</span><span class="prob-tag">Three equations in 4D</span></div>
+  <div class="prob-body">
+    <div class="prob-statement">Write down the three equations for c, d, e so that cu+dv+ew = b, where u=[2,−1,0,0], v=[−1,2,−1,0], w=[0,−1,2,−1], b=[0,0,1,0].</div>
+    <div class="solution">
+      <h3>Solution</h3>
+      <div class="step">Each row of the vector equation gives one scalar equation:</div>
+      <div class="step eq">Row 1:  2c − d       = 0
+Row 2:  −c + 2d − e = 0
+Row 3:   −d + 2e     = 1
+Row 4:       −e      = 0  ← this is extra (check equation)</div>
+      <div class="step">From Row 4: e = 0. From Row 3: −d + 0 = 1 → d = −1. From Row 1: 2c−(−1)=0 → 2c=−1 → c = −½.</div>
+      <div class="step ans">Check Row 2: −(−½)+2(−1)−0 = ½−2 = −3/2 ≠ 0. So there is <strong>no exact solution</strong> — this system is inconsistent. The vector b=(0,0,1,0) is not in the span of u,v,w.</div>
+      <div class="ans-box"><strong>Three equations (rows 1–3):</strong><br>
+      2c − d = 0 &nbsp;·&nbsp; −c + 2d − e = 0 &nbsp;·&nbsp; −d + 2e = 1<br>
+      This system has <em>no solution</em> — b is not reachable by combinations of u, v, w alone.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ════════════════════════════════════════
+// 2D canvas helpers
+// ════════════════════════════════════════
+function setup(id){
+  const c=document.getElementById(id);
+  if(!c)return null;
+  return{c,g:c.getContext('2d'),W:c.width,H:c.height};
+}
+function clearC(s){s.g.fillStyle='#fdfcfa';s.g.fillRect(0,0,s.W,s.H);}
+
+function grid(g,W,H,ox,oy,sc){
+  g.save();g.strokeStyle='#ede8df';g.lineWidth=1;
+  for(let i=-12;i<=12;i++){
+    g.beginPath();g.moveTo(ox+i*sc,0);g.lineTo(ox+i*sc,H);g.stroke();
+    g.beginPath();g.moveTo(0,oy-i*sc);g.lineTo(W,oy-i*sc);g.stroke();
+  }
+  g.strokeStyle='#c0b8aa';g.lineWidth=1.5;
+  g.beginPath();g.moveTo(0,oy);g.lineTo(W,oy);g.stroke();
+  g.beginPath();g.moveTo(ox,0);g.lineTo(ox,H);g.stroke();
+  g.fillStyle='#b0a898';g.font='10px monospace';g.textAlign='center';
+  for(let i=-8;i<=8;i++){if(i===0)continue;g.fillText(i,ox+i*sc,oy+13);}
+  g.restore();
+}
+function arr(g,x1,y1,x2,y2,col,w=2.5,al=1){
+  const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+  if(len<2)return;
+  g.save();g.globalAlpha=al;g.strokeStyle=col;g.fillStyle=col;
+  g.lineWidth=w;g.lineCap='round';
+  const ux=dx/len,uy=dy/len,hw=8,hl=13;
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2-ux*hl,y2-uy*hl);g.stroke();
+  g.beginPath();g.moveTo(x2,y2);
+  g.lineTo(x2-ux*hl-uy*hw,y2-uy*hl+ux*hw);
+  g.lineTo(x2-ux*hl+uy*hw,y2-uy*hl-ux*hw);
+  g.closePath();g.fill();g.restore();
+}
+function dash(g,x1,y1,x2,y2,col,al=.4){
+  g.save();g.strokeStyle=col;g.lineWidth=1.5;g.setLineDash([5,4]);g.globalAlpha=al;
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.restore();
+}
+function lbl(g,t,x,y,col,sz=13,st=''){
+  g.save();g.fillStyle=col;g.font=`${st} ${sz}px 'Source Serif 4',serif`;g.fillText(t,x,y);g.restore();
+}
+function dot(g,x,y,col,r=4){
+  g.save();g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill();g.restore();
+}
+function px(ox,oy,sc,x,y){return[ox+x*sc,oy-y*sc];}
+
+// ════════════════ Problem 1a ════════════════
+const s1a=setup('c1a');
+let p1a_c=1,p1a_d=0;
+function draw1a(){
+  if(!s1a)return;
+  clearC(s1a);
+  const{g,W,H}=s1a,ox=W/2,oy=H/2,sc=28;
+  grid(g,W,H,ox,oy,sc);
+  // spray span
+  g.save();
+  for(let c=-2;c<=2;c+=.4){for(let d=-1;d<=1;d+=.4){
+    const[x,y]=px(ox,oy,sc,c*1+d*6,c*2+d*9);
+    g.fillStyle='#1a6b3a';g.globalAlpha=.08;
+    g.beginPath();g.arc(x,y,3,0,Math.PI*2);g.fill();
+  }}g.restore();
+  const[O0,O1]=px(ox,oy,sc,0,0);
+  const[v0,v1]=px(ox,oy,sc,1,2);
+  const sc2=.35;// scale w down visually
+  const[w0,w1]=px(ox,oy,sc,6*sc2,9*sc2);
+  const[r0,r1]=px(ox,oy,sc,p1a_c*1+p1a_d*6,p1a_c*2+p1a_d*9);
+  arr(g,O0,O1,v0,v1,'#b83030',3);
+  arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+  arr(g,O0,O1,r0,r1,'#1a6b3a',3.5);
+  dot(g,O0,O1,'#1a1209');
+  lbl(g,'v=[1,2]',v0+6,v1-6,'#b83030',12,'italic');
+  lbl(g,'w≈[2,3]',w0+6,w1-6,'#1e4d8c',11,'italic');
+  lbl(g,`cv+dw`,r0+6,r1-6,'#1a6b3a',11,'italic');
+}
+draw1a();
+document.getElementById('c1a-c').oninput=e=>{p1a_c=+e.target.value;document.getElementById('v1a-c').textContent=p1a_c.toFixed(1);draw1a();};
+document.getElementById('c1a-d').oninput=e=>{p1a_d=+e.target.value;document.getElementById('v1a-d').textContent=p1a_d.toFixed(1);draw1a();};
+
+// ════════════════ Problem 1b ════════════════
+{const s=setup('c1b');if(s){const{g,W,H}=s,ox=W*.4,oy=H/2,sc=40;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0),[a0,a1]=px(ox,oy,sc,0,3),[b0,b1]=px(ox,oy,sc,0,-3);
+g.save();g.strokeStyle='#1e4d8c';g.lineWidth=3;g.beginPath();g.moveTo(a0,a1);g.lineTo(b0,b1);g.stroke();g.restore();
+arr(g,O0,O1,...px(ox,oy,sc,0,2),'#1e4d8c',3);
+lbl(g,'w=[0,2]',O0+8,...[px(ox,oy,sc,0,2)[1]-6],'#1e4d8c',12,'italic');
+lbl(g,'y-axis (the span)',O0+8,...[px(ox,oy,sc,0,-1.5)[1]],'#1e4d8c',11);
+dot(g,O0,O1,'#1a1209');}}
+
+// ════════════════ Problem 1c ════════════════
+{const s=setup('c1c');if(s){const{g,W,H}=s,ox=W*.4,oy=H*.55,sc=40;
+clearC(s);
+g.save();for(let c=-2;c<=2;c+=.3)for(let d=-2;d<=2;d+=.3){
+  const[x,y]=px(ox,oy,sc,d*2,c*2+d*3);
+  g.fillStyle='#1a6b3a';g.globalAlpha=.1;g.beginPath();g.arc(x,y,2.5,0,Math.PI*2);g.fill();
+}g.restore();
+grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+arr(g,O0,O1,...px(ox,oy,sc,0,2),'#1e4d8c',2.5);
+arr(g,O0,O1,...px(ox,oy,sc,2,3),'#c45c0a',2.5);
+lbl(g,'[0,2]',...px(ox,oy,sc,0,2).map((v,i)=>v+(i?-10:8)),'#1e4d8c',11,'italic');
+lbl(g,'[2,3]',...px(ox,oy,sc,2,3).map((v,i)=>v+(i?-10:8)),'#c45c0a',11,'italic');
+lbl(g,'span = all of ℝ²',ox-40,H-12,'#1a6b3a',11);
+dot(g,O0,O1,'#1a1209');}}
+
+// ════════════════ Problem 2 ════════════════
+{const s=setup('c2');if(s){const{g,W,H}=s,ox=W*.3,oy=H*.55,sc=40;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const V=[4,1],Wv=[-2,2],sp=[2,3],sm=[6,-1];
+const[v0,v1]=px(ox,oy,sc,...V),[w0,w1]=px(ox,oy,sc,...Wv);
+const[r0,r1]=px(ox,oy,sc,...sp),[d0,d1]=px(ox,oy,sc,...sm);
+g.save();g.fillStyle='#eef4ee';g.globalAlpha=.4;
+g.beginPath();g.moveTo(O0,O1);g.lineTo(v0,v1);g.lineTo(r0,r1);g.lineTo(w0,w1);g.closePath();g.fill();g.restore();
+dash(g,v0,v1,r0,r1,'#1e4d8c');dash(g,w0,w1,r0,r1,'#b83030');
+arr(g,O0,O1,v0,v1,'#b83030',3);
+arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+arr(g,O0,O1,r0,r1,'#1a6b3a',3.5);
+arr(g,O0,O1,d0,d1,'#5c2d8c',3);
+dot(g,O0,O1,'#1a1209');
+lbl(g,'v=[4,1]',v0+6,v1-6,'#b83030',12,'italic');
+lbl(g,'w=[−2,2]',w0-60,w1-6,'#1e4d8c',12,'italic');
+lbl(g,'v+w=[2,3]',r0+6,r1-6,'#1a6b3a',12,'italic');
+lbl(g,'v−w=[6,−1]',d0+6,d1+14,'#5c2d8c',12,'italic');
+}}
+
+// ════════════════ Problem 3 ════════════════
+{const s=setup('c3');if(s){const{g,W,H}=s,ox=W*.2,oy=H*.7,sc=42;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const V=[3,3],Wv=[2,-2],sp=[5,1],sm=[1,5];
+const[v0,v1]=px(ox,oy,sc,...V),[w0,w1]=px(ox,oy,sc,...Wv);
+const[r0,r1]=px(ox,oy,sc,...sp),[d0,d1]=px(ox,oy,sc,...sm);
+arr(g,O0,O1,v0,v1,'#b83030',3);
+arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+arr(g,O0,O1,r0,r1,'#1a6b3a',3.5);
+arr(g,O0,O1,d0,d1,'#5c2d8c',3.5);
+dot(g,O0,O1,'#1a1209');
+lbl(g,'v=[3,3]',v0+6,v1-6,'#b83030',12,'italic');
+lbl(g,'w=[2,−2]',w0+6,w1+14,'#1e4d8c',12,'italic');
+lbl(g,'v+w=[5,1]',r0+6,r1-6,'#1a6b3a',12,'italic');
+lbl(g,'v−w=[1,5]',d0-60,d1-6,'#5c2d8c',12,'italic');
+}}
+
+// ════════════════ Problem 4 ════════════════
+const s4=setup('c4');
+let p4c=3,p4d=1;
+function draw4(){
+  if(!s4)return;
+  clearC(s4);
+  const{g,W,H}=s4,ox=W*.25,oy=H*.7,sc=40;
+  grid(g,W,H,ox,oy,sc);
+  const[O0,O1]=px(ox,oy,sc,0,0);
+  const V=[2,1],Wv=[1,2];
+  const[v0,v1]=px(ox,oy,sc,...V),[w0,w1]=px(ox,oy,sc,...Wv);
+  const rx=p4c*V[0]+p4d*Wv[0],ry=p4c*V[1]+p4d*Wv[1];
+  const[r0,r1]=px(ox,oy,sc,rx,ry);
+  arr(g,O0,O1,v0,v1,'#b83030',2.5,.45);
+  arr(g,O0,O1,w0,w1,'#1e4d8c',2.5,.45);
+  arr(g,O0,O1,r0,r1,'#1a6b3a',3.5);
+  dot(g,O0,O1,'#1a1209');
+  lbl(g,'v',v0+6,v1-6,'#b83030',11,'italic');
+  lbl(g,'w',w0+6,w1-6,'#1e4d8c',11,'italic');
+  lbl(g,`cv+dw=[${rx.toFixed(1)},${ry.toFixed(1)}]`,r0+6,r1-6,'#1a6b3a',11);
+  document.getElementById('res4').textContent=`cv+dw = [${rx.toFixed(2)}, ${ry.toFixed(2)}]  (c=${p4c.toFixed(1)}, d=${p4d.toFixed(1)})`;
+}
+draw4();
+document.getElementById('c4c').oninput=e=>{p4c=+e.target.value;document.getElementById('v4c').textContent=p4c.toFixed(1);draw4();};
+document.getElementById('c4d').oninput=e=>{p4d=+e.target.value;document.getElementById('v4d').textContent=p4d.toFixed(1);draw4();};
+
+// ════════════════ Problem 7 ════════════════
+{const s=setup('c7');if(s){const{g,W,H}=s,ox=W*.15,oy=H*.8,sc=80;
+clearC(s);grid(g,W,H,ox,oy,sc);
+for(let c=0;c<=2;c++)for(let d=0;d<=2;d++){
+  const[x,y]=px(ox,oy,sc,c,d);
+  g.save();g.fillStyle=c===0&&d===0?'#b83030':'#1e4d8c';
+  g.beginPath();g.arc(x,y,7,0,Math.PI*2);g.fill();g.restore();
+  lbl(g,`(${c},${d})`,x+9,y-5,'#1a1209',11);
+}
+lbl(g,'9 grid points: c[1,0]+d[0,1] with c,d ∈ {0,1,2}',ox,H-8,'#6b5e4e',11);
+}}
+
+// ════════════════ Problem 8 ════════════════
+const s8=setup('c8');
+let p8v=[3,1],p8w=[1,3];
+function draw8(){
+  if(!s8)return;
+  clearC(s8);
+  const{g,W,H}=s8,ox=W*.2,oy=H*.7,sc=44;
+  grid(g,W,H,ox,oy,sc);
+  const[O0,O1]=px(ox,oy,sc,0,0);
+  const[v0,v1]=px(ox,oy,sc,...p8v);
+  const[w0,w1]=px(ox,oy,sc,...p8w);
+  const sp=[p8v[0]+p8w[0],p8v[1]+p8w[1]];
+  const[r0,r1]=px(ox,oy,sc,...sp);
+  // fill para
+  g.save();g.fillStyle='#eef4ff';g.globalAlpha=.4;
+  g.beginPath();g.moveTo(O0,O1);g.lineTo(v0,v1);g.lineTo(r0,r1);g.lineTo(w0,w1);g.closePath();g.fill();g.restore();
+  dash(g,v0,v1,r0,r1,'#888');dash(g,w0,w1,r0,r1,'#888');
+  arr(g,O0,O1,v0,v1,'#b83030',3);
+  arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+  arr(g,O0,O1,r0,r1,'#1a6b3a',3);
+  // other diagonal v-w
+  const dm=[p8v[0]-p8w[0],p8v[1]-p8w[1]];
+  arr(g,w0,w1,v0,v1,'#5c2d8c',3);
+  dot(g,O0,O1,'#1a1209');
+  lbl(g,'v',v0+6,v1-6,'#b83030',12,'italic');
+  lbl(g,'w',w0-20,w1-6,'#1e4d8c',12,'italic');
+  lbl(g,'v+w',r0+6,r1-6,'#1a6b3a',12,'italic');
+  lbl(g,'v−w (other diag)',v0+6,v1+14,'#5c2d8c',11,'italic');
+}
+draw8();
+['v1','v2','w1','w2'].forEach(k=>{
+  const el=document.getElementById(`c8${k}`);
+  if(el)el.oninput=e=>{
+    if(k==='v1')p8v[0]=+e.target.value;
+    else if(k==='v2')p8v[1]=+e.target.value;
+    else if(k==='w1')p8w[0]=+e.target.value;
+    else p8w[1]=+e.target.value;
+    document.getElementById(`v8${k}`).textContent=e.target.value;
+    draw8();
+  };
+});
+
+// ════════════════ Problem 9 ════════════════
+const s9=setup('c9');
+let p9case=1;
+function draw9(){
+  if(!s9)return;
+  clearC(s9);
+  const{g,W,H}=s9,ox=W*.5,oy=H*.6,sc=44;
+  grid(g,W,H,ox,oy,sc);
+  const A=[1,1],B=[4,2],C=[1,3];
+  const Ds=[[4,0],[-2,0],[4,4]];
+  const cols=['#b83030','#1e4d8c','#1a6b3a'];
+  const D=Ds[p9case-1];
+  const pts=[A,B,C,D];
+  const[o0,o1]=px(ox,oy,sc,0,0);
+  // parallelogram
+  let order;
+  if(p9case===1)order=[A,B,D,C]; // A,B opposite means ABDC
+  else if(p9case===2)order=[A,B,C,D];
+  else order=[A,B,D,C];
+  // just draw all 4 sides connecting the known 3 + D as a parallelogram
+  // find which pair is opposite and draw accordingly
+  const pairOpp=[[A,B,C,D],[A,C,B,D],[B,C,A,D]];
+  const q=pairOpp[p9case-1];
+  const corners=[q[0],q[2],q[1],q[3]]; // alternating
+  g.save();g.fillStyle=cols[p9case-1];g.globalAlpha=.12;
+  g.beginPath();
+  corners.forEach((pt,i)=>{const[x,y]=px(ox,oy,sc,...pt);i?g.lineTo(x,y):g.moveTo(x,y);});
+  g.closePath();g.fill();g.restore();
+  g.save();g.strokeStyle=cols[p9case-1];g.lineWidth=2;g.globalAlpha=.6;
+  g.beginPath();
+  corners.forEach((pt,i)=>{const[x,y]=px(ox,oy,sc,...pt);i?g.lineTo(x,y):g.moveTo(x,y);});
+  g.closePath();g.stroke();g.restore();
+  [A,B,C].forEach((pt,i)=>{
+    const[x,y]=px(ox,oy,sc,...pt);
+    dot(g,x,y,'#1a1209',5);
+    lbl(g,['A(1,1)','B(4,2)','C(1,3)'][i],x+7,y-6,'#1a1209',11);
+  });
+  const[dx,dy]=px(ox,oy,sc,...D);
+  dot(g,dx,dy,cols[p9case-1],6);
+  lbl(g,`D=(${D[0]},${D[1]})`,dx+7,dy-6,cols[p9case-1],12,'italic 600');
+}
+draw9();
+function setCase9(n){
+  p9case=n;
+  [1,2,3].forEach(i=>document.getElementById(`b9-${i}`).classList.toggle('on',i===n));
+  draw9();
+}
+
+// ════════════════ Problem 13a ════════════════
+{const s=setup('c13a');if(s){const{g,W,H}=s,cx=W/2,cy=H/2,R=110;
+clearC(s);
+g.save();g.strokeStyle='#ddd';g.lineWidth=1;g.beginPath();g.arc(cx,cy,R,0,Math.PI*2);g.stroke();g.restore();
+let sx=0,sy=0;
+for(let h=1;h<=12;h++){
+  const ang=Math.PI/2-h*Math.PI/6;
+  const vx=Math.cos(ang),vy=Math.sin(ang);
+  sx+=vx;sy+=vy;
+  const col=h===2?'#c45c0a':'#1e4d8c';
+  arr(g,cx,cy,cx+vx*R,cy-vy*R,col,h===2?3:2,h===2?1:.6);
+  lbl(g,`${h}`,cx+vx*(R+14)-6,cy-vy*(R+14)+4,'#6b5e4e',10);
+}
+lbl(g,'Sum = (0,0) — vectors cancel in pairs',cx-100,H-10,'#1a6b3a',11);
+dot(g,cx,cy,'#1a1209');
+}}
+
+// ════════════════ Problem 13c ════════════════
+{const s=setup('c13c');if(s){const{g,W,H}=s,cx=W/2,cy=H/2,R=100;
+clearC(s);
+g.save();g.strokeStyle='#ddd';g.lineWidth=1;g.beginPath();g.arc(cx,cy,R,0,Math.PI*2);g.stroke();g.restore();
+for(let h=1;h<=12;h++){
+  const ang=Math.PI/2-h*Math.PI/6;
+  const col=h===2?'#c45c0a':h===8?'#5c2d8c':'#1e4d8c';
+  const w=h===2||h===8?3:1.5,al=h===2||h===8?1:.35;
+  arr(g,cx,cy,cx+Math.cos(ang)*R,cy-Math.sin(ang)*R,col,w,al);
+  if(h===2){
+    const vx=Math.cos(ang),vy=Math.sin(ang);
+    lbl(g,`2:00 = (cos30°,sin30°)`,cx+vx*R+8,cy-vy*R-6,'#c45c0a',11);
+    lbl(g,`= (√3/2, 1/2)`,cx+vx*R+8,cy-vy*R+8,'#c45c0a',11);
+  }
+  if(h===8)lbl(g,'8:00 = −v₂',cx+Math.cos(ang)*R+6,cy-Math.sin(ang)*R+4,'#5c2d8c',11);
+}
+// angle arc
+g.save();g.strokeStyle='#c45c0a';g.lineWidth=1.5;
+g.beginPath();g.arc(cx,cy,30,Math.PI/2-Math.PI/3,Math.PI/2);g.stroke();g.restore();
+lbl(g,'30°',cx+22,cy-18,'#c45c0a',10);
+dot(g,cx,cy,'#1a1209');
+}}
+
+// ════════════════ Problems 15-19 shared vectors ════════════════
+const V15=[3,1],W15=[1,3];
+
+// 15
+const s15=setup('c15');
+let p15c=.5;
+function draw15(){
+  if(!s15)return;clearC(s15);
+  const{g,W,H}=s15,ox=W*.15,oy=H*.8,sc=52;
+  grid(g,W,H,ox,oy,sc);
+  const[O0,O1]=px(ox,oy,sc,0,0);
+  const[v0,v1]=px(ox,oy,sc,...V15),[w0,w1]=px(ox,oy,sc,...W15);
+  arr(g,O0,O1,v0,v1,'#b83030',2.5);
+  arr(g,O0,O1,w0,w1,'#1e4d8c',2.5);
+  const pts=[[1,0,'v'],[.75,.25,'¾v+¼w'],[.5,.5,'½v+½w'],[.25,.75,'¼v+¾w'],[0,1,'w']];
+  pts.forEach(([c,d,lbtxt])=>{
+    const rx=c*V15[0]+d*W15[0],ry=c*V15[1]+d*W15[1];
+    const[x,y]=px(ox,oy,sc,rx,ry);
+    dot(g,x,y,Math.abs(c-.5)<.01?'#1a6b3a':'#c45c0a',5);
+    lbl(g,lbtxt,x+7,y-5,'#1a1209',10);
+  });
+  // moving point
+  const rx=p15c*V15[0]+(1-p15c)*W15[0],ry=p15c*V15[1]+(1-p15c)*W15[1];
+  const[rx0,ry0]=px(ox,oy,sc,rx,ry);
+  g.save();g.fillStyle='#c45c0a';g.beginPath();g.arc(rx0,ry0,7,0,Math.PI*2);g.fill();g.restore();
+  lbl(g,`c=${p15c.toFixed(2)}, d=${(1-p15c).toFixed(2)}`,rx0+9,ry0-5,'#c45c0a',11);
+}
+draw15();
+document.getElementById('c15c').oninput=e=>{
+  p15c=+e.target.value;
+  document.getElementById('v15c').textContent=p15c.toFixed(2);
+  document.getElementById('v15d').textContent=(1-p15c).toFixed(2);
+  draw15();
+};
+
+// 16
+{const s=setup('c16');if(s){const{g,W,H}=s,ox=W*.3,oy=H*.7,sc=52;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const[v0,v1]=px(ox,oy,sc,...V15),[w0,w1]=px(ox,oy,sc,...W15);
+// line through v and w
+const ext=6;
+const dx=V15[0]-W15[0],dy=V15[1]-W15[1];
+const[la,lb]=px(ox,oy,sc,W15[0]-dx*ext,W15[1]-dy*ext);
+const[lc,ld]=px(ox,oy,sc,W15[0]+dx*(1+ext),W15[1]+dy*(1+ext));
+g.save();g.strokeStyle='#1a6b3a';g.lineWidth=1.5;g.setLineDash([6,4]);g.beginPath();g.moveTo(la,lb);g.lineTo(lc,ld);g.stroke();g.restore();
+arr(g,O0,O1,v0,v1,'#b83030',3);
+arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+// -v+2w
+const sp=[-1*V15[0]+2*W15[0],-1*V15[1]+2*W15[1]];
+const[r0,r1]=px(ox,oy,sc,...sp);
+dot(g,r0,r1,'#c45c0a',6);
+lbl(g,'−v+2w',r0+7,r1-5,'#c45c0a',11);
+lbl(g,'line c+d=1',O0+10,O1-5,'#1a6b3a',11);
+dot(g,O0,O1,'#1a1209');
+lbl(g,'v',v0+6,v1-6,'#b83030',12,'italic');
+lbl(g,'w',w0-20,w1-6,'#1e4d8c',12,'italic');
+}}
+
+// 17
+{const s=setup('c17');if(s){const{g,W,H}=s,ox=W*.15,oy=H*.8,sc=52;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const[v0,v1]=px(ox,oy,sc,...V15),[w0,w1]=px(ox,oy,sc,...W15);
+arr(g,O0,O1,v0,v1,'#b83030',2.5,.4);
+arr(g,O0,O1,w0,w1,'#1e4d8c',2.5,.4);
+// ½v+⅓w
+const p1=[.5*V15[0]+1/3*W15[0],.5*V15[1]+1/3*W15[1]];
+const p2=[2/3*V15[0]+1/3*W15[0],2/3*V15[1]+1/3*W15[1]];
+const[a0,a1]=px(ox,oy,sc,...p1),[b0,b1]=px(ox,oy,sc,...p2);
+dot(g,a0,a1,'#b83030',6);lbl(g,'½v+⅓w',a0+8,a1-5,'#b83030',11);
+dot(g,b0,b1,'#1e4d8c',6);lbl(g,'⅔v+⅓w (on line c+d=1)',b0+8,b1-5,'#1e4d8c',11);
+// line cv+cw (same c)
+const ext=3;
+const[la,lb]=px(ox,oy,sc,0,0);
+const[lc,ld]=px(ox,oy,sc,(V15[0]+W15[0])*ext,(V15[1]+W15[1])*ext);
+g.save();g.strokeStyle='#1a6b3a';g.lineWidth=2;g.setLineDash([6,4]);
+g.beginPath();g.moveTo(la,lb);g.lineTo(lc,ld);g.stroke();g.restore();
+lbl(g,'cv+cw: line thru origin (dir v+w)',la+5,lb+14,'#1a6b3a',10);
+dot(g,O0,O1,'#1a1209');
+}}
+
+// 18
+{const s=setup('c18');if(s){const{g,W,H}=s,ox=W*.15,oy=H*.8,sc=52;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const[v0,v1]=px(ox,oy,sc,...V15),[w0,w1]=px(ox,oy,sc,...W15);
+const[s0,s1]=px(ox,oy,sc,V15[0]+W15[0],V15[1]+W15[1]);
+g.save();g.fillStyle='#1a6b3a';g.globalAlpha=.18;
+g.beginPath();g.moveTo(O0,O1);g.lineTo(v0,v1);g.lineTo(s0,s1);g.lineTo(w0,w1);g.closePath();g.fill();g.restore();
+g.save();g.strokeStyle='#1a6b3a';g.lineWidth=1.5;
+g.beginPath();g.moveTo(O0,O1);g.lineTo(v0,v1);g.lineTo(s0,s1);g.lineTo(w0,w1);g.closePath();g.stroke();g.restore();
+arr(g,O0,O1,v0,v1,'#b83030',3);arr(g,O0,O1,w0,w1,'#1e4d8c',3);
+dot(g,s0,s1,'#1a6b3a',5);
+lbl(g,'v',v0+6,v1-6,'#b83030',12,'italic');lbl(g,'w',w0-20,w1-6,'#1e4d8c',12,'italic');
+lbl(g,'v+w',s0+6,s1-6,'#1a6b3a',11);
+lbl(g,'Parallelogram (shaded)',O0+5,O1-10,'#1a6b3a',10);
+dot(g,O0,O1,'#1a1209');
+}}
+
+// 19
+{const s=setup('c19');if(s){const{g,W,H}=s,ox=W*.15,oy=H*.85,sc=44;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const[v0,v1]=px(ox,oy,sc,...V15),[w0,w1]=px(ox,oy,sc,...W15);
+// shade cone
+g.save();g.fillStyle='#1a6b3a';g.globalAlpha=.12;
+g.beginPath();g.moveTo(O0,O1);
+for(let t=0;t<=10;t+=.2)for(let s2=0;s2<=10;s2+=.2){
+  const[x,y]=px(ox,oy,sc,t*V15[0]+s2*W15[0],t*V15[1]+s2*W15[1]);
+  if(x>=0&&x<=s.W&&y>=0&&y<=s.H){g.beginPath();g.arc(x,y,3,0,Math.PI*2);g.fill();}
+}g.restore();
+// rays
+const sc2=5;
+g.save();g.strokeStyle='#b83030';g.lineWidth=2;
+g.beginPath();g.moveTo(O0,O1);g.lineTo(...px(ox,oy,sc,V15[0]*sc2,V15[1]*sc2));g.stroke();
+g.strokeStyle='#1e4d8c';g.beginPath();g.moveTo(O0,O1);g.lineTo(...px(ox,oy,sc,W15[0]*sc2,W15[1]*sc2));g.stroke();g.restore();
+lbl(g,'d=0 (along v)',v0*2.2,v1*.6,'#b83030',10);lbl(g,'c=0 (along w)',12,w1*.5,'#1e4d8c',10);
+lbl(g,'cone: c≥0, d≥0',ox,H-8,'#1a6b3a',11);
+dot(g,O0,O1,'#1a1209');
+}}
+
+// ════════════════ Problem 26 ════════════════
+{const s=setup('c26');if(s){const{g,W,H}=s,ox=W*.15,oy=H*.8,sc=20;
+clearC(s);grid(g,W,H,ox,oy,sc);
+const[O0,O1]=px(ox,oy,sc,0,0);
+const c=2,d=4,V=[1,2],Wv=[3,1];
+arr(g,O0,O1,...px(ox,oy,sc,c*V[0],c*V[1]),'#b83030',3);
+arr(g,O0,O1,...px(ox,oy,sc,d*Wv[0],d*Wv[1]),'#1e4d8c',3);
+arr(g,O0,O1,...px(ox,oy,sc,14,8),'#1a6b3a',3.5);
+dot(g,O0,O1,'#1a1209');
+lbl(g,'2v=[2,4]',...px(ox,oy,sc,1,2).map((v,i)=>v+(i?-10:8)),'#b83030',11);
+lbl(g,'4w=[12,4]',...px(ox,oy,sc,12,4).map((v,i)=>v+(i?+12:8)),'#1e4d8c',11);
+lbl(g,'b=[14,8]',...px(ox,oy,sc,14,8).map((v,i)=>v+(i?-10:8)),'#1a6b3a',12);
+}}
+
+// ════════════════ TOC builder ════════════════
+const probs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,26,27,28,29,30,31];
+const toc=document.getElementById('toc');
+probs.forEach(n=>{
+  const b=document.createElement('button');
+  b.className='toc-btn';b.textContent=`Problem ${n}`;
+  b.onclick=()=>document.getElementById(`p${n}`)?.scrollIntoView({behavior:'smooth'});
+  toc.appendChild(b);
+});
+
+// ════════════════ Sub-tab logic ════════════════
+document.querySelectorAll('.sub-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const prob=btn.dataset.prob,tab=btn.dataset.tab;
+    document.querySelectorAll(`.sub-tab[data-prob="${prob}"]`).forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll(`[id^="p${prob}"]`).forEach(c=>{if(c.classList.contains('sub-content'))c.classList.remove('active');});
+    btn.classList.add('active');
+    document.getElementById(tab)?.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
